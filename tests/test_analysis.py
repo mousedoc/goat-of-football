@@ -69,6 +69,8 @@ class AnalysisTests(unittest.TestCase):
             validate(output)
             analysis = json.loads((output / "data" / "analysis.json").read_text(encoding="utf-8"))
             self.assertEqual(analysis["meta"]["candidate_count"], 15)
+            self.assertTrue((output / "tokens.css").is_file())
+            self.assertIn("renderRadarChart", (output / "app.js").read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

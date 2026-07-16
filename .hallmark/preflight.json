@@ -1,0 +1,25 @@
+{
+  "scanned_at": "2026-07-16",
+  "project": "goat-of-football",
+  "signals": {
+    "framework": "vanilla HTML, CSS, JavaScript with Python static build",
+    "font_stack": "system sans-serif stack in site/styles.css",
+    "palette": "raw hex custom properties in site/styles.css",
+    "motion": "CSS and vanilla JavaScript only; no motion library",
+    "spacing": "ad hoc rem and clamp values; no semantic 4-point token scale",
+    "design_system": "no design.md and no prior Hallmark tokens"
+  },
+  "preserve": [
+    "analysis model and generated data contract",
+    "Korean report copy and information architecture",
+    "local Wikimedia Commons player portraits and attribution",
+    "existing accessible tab and control behavior"
+  ],
+  "introduce": [
+    "Sport catalog theme",
+    "Workbench macrostructure",
+    "portable OKLCH token system",
+    "accessible six-axis radar charts",
+    "responsive side-rail navigation and mobile disclosure"
+  ]
+}

@@ -2,6 +2,8 @@
   "use strict";
 
   const DATA_URL = "./data/analysis.json";
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  let radarSequence = 0;
   const state = {
     data: null,
     playersById: new Map(),
@@ -73,23 +75,6 @@
     return `${fmt(ratePercent(value), digits)}%`;
   }
 
-  function safeColor(value, fallback = "#17495c") {
-    if (typeof value !== "string") return fallback;
-    const color = value.trim();
-    return /^(#[0-9a-f]{3,8}|rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)|hsl\(\s*\d+(?:deg)?\s*,\s*\d+%\s*,\s*\d+%\s*\))$/i.test(color)
-      ? color
-      : fallback;
-  }
-
-  function contrastColor(value) {
-    const color = safeColor(value).replace("#", "");
-    if (!/^[0-9a-f]{6}$/i.test(color)) return "#ffffff";
-    const channels = [0, 2, 4].map((offset) => parseInt(color.slice(offset, offset + 2), 16) / 255)
-      .map((channel) => channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
-    const luminance = channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
-    return luminance > 0.48 ? "#102f3f" : "#ffffff";
-  }
-
   function safeUrl(value) {
     if (typeof value !== "string") return null;
     try {
@@ -130,6 +115,121 @@
     }
     if (isObject(value)) return clamp(value.score ?? value.value ?? value.normalized);
     return clamp(value);
+  }
+
+  function svgElement(tag, attributes = {}, text) {
+    const node = document.createElementNS(SVG_NS, tag);
+    Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, String(value)));
+    if (text !== undefined && text !== null) node.textContent = String(text);
+    return node;
+  }
+
+  function radarPoint(index, count, radius, centerX, centerY) {
+    const angle = -Math.PI / 2 + (index * Math.PI * 2) / count;
+    return {
+      x: centerX + Math.cos(angle) * radius,
+      y: centerY + Math.sin(angle) * radius,
+    };
+  }
+
+  function radarPoints(dimensions, radius, centerX, centerY, values = null) {
+    return dimensions.map((dimension, index) => {
+      const scale = values ? clamp(values[dimension.key]) / 100 : 1;
+      const point = radarPoint(index, dimensions.length, radius * scale, centerX, centerY);
+      return `${point.x.toFixed(2)},${point.y.toFixed(2)}`;
+    }).join(" ");
+  }
+
+  function renderRadarChart(container, series, options = {}) {
+    if (!container) return;
+    clear(container);
+    const dimensions = state.data.methodology.dimensions;
+    if (dimensions.length < 3 || !series.length) return;
+    const compact = Boolean(options.compact);
+    const width = compact ? 100 : 520;
+    const height = compact ? 100 : 440;
+    const centerX = compact ? 50 : 260;
+    const centerY = compact ? 50 : 206;
+    const radius = compact ? 41 : 142;
+    const id = `radar-${++radarSequence}`;
+    const title = series.map((entry) => [entry.roleLabel, playerName(entry.player)].filter(Boolean).join(" ")).join(" 대 ");
+    const description = series.map((entry) => {
+      const values = dimensions.map((dimension) => `${dimension.label} ${fmt(dimensionValue(entry.player, dimension.key), 0)}점`).join(", ");
+      return `${entry.roleLabel ? `${entry.roleLabel} ` : ""}${playerName(entry.player)}: ${values}`;
+    }).join(". ");
+    const svg = svgElement("svg", {
+      class: `radar-svg${compact ? " radar-svg--compact" : ""}`,
+      viewBox: `0 0 ${width} ${height}`,
+      role: "img",
+      focusable: "false",
+      "aria-labelledby": `${id}-title ${id}-desc`,
+    });
+    svg.append(
+      svgElement("title", { id: `${id}-title` }, `${title} 6차원 기량 레이더`),
+      svgElement("desc", { id: `${id}-desc` }, description),
+    );
+
+    const grid = svgElement("g", { class: "radar-grid", "aria-hidden": "true" });
+    (compact ? [0.5, 1] : [0.25, 0.5, 0.75, 1]).forEach((level) => {
+      grid.append(svgElement("polygon", {
+        points: radarPoints(dimensions, radius * level, centerX, centerY),
+        class: level === 1 ? "radar-ring radar-ring--outer" : "radar-ring",
+      }));
+    });
+    dimensions.forEach((dimension, index) => {
+      const end = radarPoint(index, dimensions.length, radius, centerX, centerY);
+      grid.append(svgElement("line", {
+        x1: centerX,
+        y1: centerY,
+        x2: end.x,
+        y2: end.y,
+        class: "radar-axis",
+      }));
+    });
+    svg.append(grid);
+
+    series.forEach((entry, seriesIndex) => {
+      const values = Object.fromEntries(dimensions.map((dimension) => [dimension.key, dimensionValue(entry.player, dimension.key)]));
+      const className = entry.className || (seriesIndex === 0 ? "radar-series--a" : "radar-series--b");
+      const group = svgElement("g", { class: `radar-series ${className}`, "aria-hidden": "true" });
+      group.append(svgElement("polygon", {
+        points: radarPoints(dimensions, radius, centerX, centerY, values),
+        class: "radar-shape",
+      }));
+      if (!compact) {
+        dimensions.forEach((dimension, index) => {
+          const point = radarPoint(index, dimensions.length, radius * values[dimension.key] / 100, centerX, centerY);
+          if (seriesIndex === 0) {
+            group.append(svgElement("circle", { cx: point.x, cy: point.y, r: 4.5, class: "radar-marker" }));
+          } else {
+            group.append(svgElement("rect", { x: point.x - 4, y: point.y - 4, width: 8, height: 8, class: "radar-marker" }));
+          }
+        });
+      }
+      svg.append(group);
+    });
+
+    if (!compact) {
+      const labels = svgElement("g", { class: "radar-labels", "aria-hidden": "true" });
+      dimensions.forEach((dimension, index) => {
+        const point = radarPoint(index, dimensions.length, radius + 45, centerX, centerY);
+        const anchor = Math.abs(point.x - centerX) < 8 ? "middle" : point.x > centerX ? "start" : "end";
+        const label = svgElement("text", {
+          x: point.x,
+          y: point.y,
+          class: "radar-axis-label",
+          "text-anchor": anchor,
+          "dominant-baseline": "middle",
+        });
+        label.append(svgElement("tspan", { x: point.x }, dimension.label));
+        if (series.length === 1) {
+          label.append(svgElement("tspan", { x: point.x, dy: 18, class: "radar-axis-value" }, `${fmt(dimensionValue(series[0].player, dimension.key), 0)}`));
+        }
+        labels.append(label);
+      });
+      svg.append(labels);
+    }
+    container.append(svg);
   }
 
   function scoreBounds(player) {
@@ -357,8 +457,6 @@
   function makePlayerSigil(player) {
     const sigil = element("span", "player-sigil");
     sigil.setAttribute("aria-hidden", "true");
-    sigil.style.setProperty("--player-color", safeColor(player.color));
-    sigil.style.color = contrastColor(player.color);
     const assetPath = safeAssetPath(player?.photo?.asset_path);
     if (assetPath) {
       const image = element("img");
@@ -408,6 +506,7 @@
     setText("#winner-name", playerName(winner));
     setText("#winner-context", [winner.country, winner.era, winner.position].filter(Boolean).join(" · "));
     setText("#winner-score", fmt(top.score));
+    $("#winner-score").dataset.numberTarget = String(top.score);
     setText("#winner-interval", `${fmt(top.score_low)}–${fmt(top.score_high)}`);
     setText("#snapshot-candidates", fmtCount(candidateCount));
     setText("#snapshot-dimensions", fmtCount(state.data.methodology.dimensions.length));
@@ -420,6 +519,7 @@
     const heroImage = $("img", heroSigil);
     if (heroImage) heroImage.loading = "eager";
     winnerPortrait.append(heroSigil);
+    renderRadarChart($("#winner-radar"), [{ player: winner, className: "radar-series--a" }], { compact: true });
 
     const overlaps = second ? top.score_low <= second.score_high && second.score_low <= top.score_high : false;
     setText("#verdict-title", finding.label || "가장 높은 종합 점수");
@@ -525,7 +625,6 @@
     const low = clamp(row.score_low);
     const high = clamp(row.score_high);
     const point = clamp(row.score);
-    chart.style.setProperty("--accent", safeColor(player.color, "#167b79"));
     const band = element("span", "interval-band");
     band.style.setProperty("--left", `${low}%`);
     band.style.setProperty("--width", `${Math.max(0, high - low)}%`);
@@ -578,6 +677,9 @@
       const context = element("td", "context-cell");
       append(context, element("span", "", player.position || player.position_group || "—"), element("small", "", player.era || "시대 미기재"));
 
+      const radar = element("td", "radar-cell");
+      renderRadarChart(radar, [{ player, className: "radar-series--a" }], { compact: true });
+
       const score = element("td", "score-cell");
       append(score, element("strong", "", fmt(row.score)), element("small", "", "/ 100"));
 
@@ -594,14 +696,14 @@
       robust.append(meter);
 
       const action = element("td");
-      const button = element("button", "row-button", "↗");
+      const button = element("button", "row-button", "분석");
       button.type = "button";
       button.dataset.playerId = player.id;
       button.setAttribute("aria-label", `${playerName(player)} 상세 프로필 보기`);
       button.setAttribute("aria-pressed", String(player.id === state.selectedPlayerId));
       action.append(button);
 
-      append(tr, rank, playerTd, context, score, interval, robust, action);
+      append(tr, rank, playerTd, context, radar, score, interval, robust, action);
       body.append(tr);
     });
     $("#ranking-empty").hidden = rows.length > 0;
@@ -617,7 +719,6 @@
       const track = element("div", "dimension-track");
       const fill = element("span");
       fill.style.setProperty("--value", `${value}%`);
-      fill.style.setProperty("--accent", safeColor(player.color, "#167b79"));
       track.append(fill);
       track.setAttribute("role", "img");
       track.setAttribute("aria-label", `${dimension.label} ${fmt(value)}점`);
@@ -660,6 +761,12 @@
     setText("#dossier-name", playerName(player));
     setText("#dossier-meta", [player.name_en && player.name_en !== playerName(player) ? player.name_en : null, player.country, player.era, player.position].filter(Boolean).join(" · "));
     setText("#dossier-rank", rank ? `#${rank.rank}` : "—");
+    const portrait = $("#dossier-portrait");
+    clear(portrait);
+    const dossierSigil = makePlayerSigil(player);
+    dossierSigil.classList.add("player-sigil--dossier");
+    portrait.append(dossierSigil);
+    renderRadarChart($("#dossier-radar"), [{ player, className: "radar-series--a" }]);
     renderDimensionBars($("#dossier-dimensions"), player);
     renderCaseList("#case-for", player.case_for);
     renderCaseList("#case-against", player.case_against);
@@ -672,7 +779,11 @@
     renderRanking();
     renderDossier();
     announce(`${playerName(state.playersById.get(playerId))} 상세 프로필을 표시했습니다.`);
-    if (scroll) $("#player-dossier").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    if (scroll) {
+      const heading = $("#dossier-name");
+      heading.focus({ preventScroll: true });
+      $("#player-dossier").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    }
   }
 
   function renderScenarioTabs() {
@@ -790,7 +901,10 @@
       const output = $(`#weight-output-${CSS.escape(dimension.key)}`);
       if (output) output.textContent = `${fmt(normalized[dimension.key], 1)}%`;
       const input = $(`#weight-${CSS.escape(dimension.key)}`);
-      if (input) input.style.setProperty("--range-progress", `${input.value}%`);
+      if (input) {
+        input.style.setProperty("--range-progress", `${input.value}%`);
+        input.setAttribute("aria-valuetext", `원시값 ${fmt(finite(input.value), 0)}, 정규화 ${fmt(normalized[dimension.key], 1)}퍼센트`);
+      }
     });
     setText("#normalized-total", "100%");
     setText("#custom-winner-name", playerName(winner));
@@ -827,15 +941,25 @@
     const card = (player) => {
       const bounds = scoreBounds(player);
       const node = element("article", "compare-card");
-      append(node,
+      const identity = element("div", "compare-identity");
+      const copy = element("div");
+      append(copy,
         element("p", "", [player.country, player.era, player.position].filter(Boolean).join(" · ")),
         element("h3", "", playerName(player)),
+      );
+      append(identity, makePlayerSigil(player), copy);
+      append(node,
+        identity,
         element("span", "compare-score", fmt(bounds.score)),
         element("p", "", `불확실성 ${fmt(bounds.low)}–${fmt(bounds.high)} · 1위 도달률 ${fmtPercent(robustWinRate(player))}`),
       );
       return node;
     };
     append(summary, card(playerA), element("div", "compare-divider"), card(playerB));
+    renderRadarChart($("#compare-radar"), [
+      { player: playerA, className: "radar-series--a", roleLabel: "후보 A" },
+      { player: playerB, className: "radar-series--b", roleLabel: "후보 B" },
+    ]);
 
     const chart = $("#compare-chart");
     clear(chart);
@@ -847,14 +971,14 @@
       const leftTrack = element("div", "compare-bar-track");
       const leftFill = element("i");
       leftFill.style.setProperty("--value", `${a}%`);
-      leftFill.style.setProperty("--bar-color", "#167b79");
+      leftFill.classList.add("series-a");
       leftTrack.append(leftFill);
       append(left, leftTrack, element("strong", "", fmt(a, 0)));
       const right = element("div", "compare-side");
       const rightTrack = element("div", "compare-bar-track");
       const rightFill = element("i");
       rightFill.style.setProperty("--value", `${b}%`);
-      rightFill.style.setProperty("--bar-color", "#e85d43");
+      rightFill.classList.add("series-b");
       rightTrack.append(rightFill);
       append(right, element("strong", "", fmt(b, 0)), rightTrack);
       append(row, left, element("div", "compare-row-label", dimension.label), right);
@@ -881,7 +1005,7 @@
     return [];
   }
 
-  function renderProbabilityList(container, entries, color) {
+  function renderProbabilityList(container, entries, seriesClass) {
     clear(container);
     entries.sort((a, b) => b.rate - a.rate).slice(0, 10).forEach((entry) => {
       const player = state.playersById.get(entry.player_id);
@@ -889,7 +1013,7 @@
       const track = element("div", "probability-track");
       const fill = element("i");
       fill.style.setProperty("--value", `${entry.rate}%`);
-      fill.style.setProperty("--bar-color", color);
+      fill.classList.add(seriesClass);
       track.append(fill);
       track.setAttribute("role", "img");
       track.setAttribute("aria-label", `${playerName(player)} ${fmtPercent(entry.rate)}`);
@@ -920,8 +1044,8 @@
       stat("균형 모델 1·2위 격차", second ? `${fmt(top.score - second.score)}점` : "—", "중앙 추정치 기준이며 구간 중첩을 함께 확인해야 합니다."),
       stat("시나리오별 서로 다른 1위", `${distinctWinners}명`, `${state.scenarios.length}개 가치 시나리오에서 관찰된 결과입니다.`),
     );
-    renderProbabilityList($("#win-probabilities"), wins, "#167b79");
-    renderProbabilityList($("#top3-probabilities"), top3, "#e85d43");
+    renderProbabilityList($("#win-probabilities"), wins, "series-a");
+    renderProbabilityList($("#top3-probabilities"), top3, "series-b");
 
     const pareto = $("#pareto-names");
     clear(pareto);
@@ -1149,6 +1273,25 @@
     else write();
   }
 
+  function revealHeroScore() {
+    const node = $("#winner-score");
+    const target = finite(node?.dataset.numberTarget, NaN);
+    if (!node || !Number.isFinite(target) || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      if (node && Number.isFinite(target)) node.textContent = fmt(target);
+      return;
+    }
+    const duration = 900;
+    const started = performance.now();
+    const step = (now) => {
+      const progress = Math.min(1, (now - started) / duration);
+      const eased = 1 - (1 - progress) ** 4;
+      node.textContent = fmt(target * eased);
+      if (progress < 1) requestAnimationFrame(step);
+      else node.textContent = fmt(target);
+    };
+    requestAnimationFrame(step);
+  }
+
   function downloadRawCsv() {
     const player = state.playersById.get(state.rawPlayerId);
     if (!player || !state.rawRows.length) return;
@@ -1183,6 +1326,15 @@
   }
 
   function bindEvents() {
+    const mobileNav = $(".mobile-nav");
+    const mobileNavSummary = $("summary", mobileNav);
+    mobileNav?.addEventListener("toggle", () => {
+      mobileNavSummary?.setAttribute("aria-expanded", String(mobileNav.open));
+      mobileNavSummary?.setAttribute("aria-label", mobileNav.open ? "보고서 목차 닫기" : "보고서 목차 열기");
+    });
+    $$("nav a", mobileNav).forEach((link) => link.addEventListener("click", () => {
+      mobileNav.open = false;
+    }));
     $("#ranking-search").addEventListener("input", renderRanking);
     $("#position-filter").addEventListener("change", renderRanking);
     $("#era-filter").addEventListener("change", renderRanking);
@@ -1274,6 +1426,7 @@
     $("#loading-state").hidden = true;
     $("#error-state").hidden = true;
     $("#report").hidden = false;
+    revealHeroScore();
   }
 
   function showError(error) {

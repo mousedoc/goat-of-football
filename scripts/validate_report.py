@@ -13,7 +13,8 @@ from urllib.parse import urlparse
 REQUIRED_FILES = (
     "index.html",
     "404.html",
-    "styles.css",
+    "football-theme.css",
+    "tokens.css",
     "app.js",
     ".nojekyll",
     "data/analysis.json",
@@ -32,14 +33,30 @@ def validate(output: Path) -> None:
         require((output / relative).is_file(), f"missing required file: {relative}")
 
     index = (output / "index.html").read_text(encoding="utf-8")
-    styles = (output / "styles.css").read_text(encoding="utf-8")
+    styles = (output / "football-theme.css").read_text(encoding="utf-8")
+    tokens = (output / "tokens.css").read_text(encoding="utf-8")
+    app = (output / "app.js").read_text(encoding="utf-8")
     require('lang="ko"' in index or "lang='ko'" in index, "index.html must declare Korean language")
     require("name=\"viewport\"" in index or "name='viewport'" in index, "viewport meta is required")
     require("<title>" in index, "document title is required")
     require("skip" in index.lower(), "a keyboard skip link is required")
     require(not re.search(r"(?:src|href)=[\"']/", index), "root-absolute asset URLs break project Pages")
     require("TODO" not in index and "Lorem ipsum" not in index, "placeholder copy found")
-    require(not re.search(r"(?<!sans-)serif\b|Georgia|Times New Roman|Batang|바탕", styles, re.I), "serif typography is not allowed")
+    require(not re.search(r"(?<!sans-)serif\b|Georgia|Times New Roman|Batang|바탕", f"{styles}\n{tokens}", re.I), "serif typography is not allowed")
+    require(styles.lstrip().startswith("/* Hallmark"), "Hallmark design stamp is required")
+    require('@import url("./tokens.css")' in styles, "football theme must import portable tokens")
+    require(styles.count("overflow-x: clip") >= 2, "html and body must both use overflow-x: clip")
+    require("prefers-reduced-motion: reduce" in styles, "reduced-motion fallback is required")
+    require("slop: pass (42–45)" in styles and "mobile: pass (34, 49, 50–57)" in styles, "Hallmark audit stamp is incomplete")
+    require(not re.search(r"#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(", styles, re.I), "theme CSS must consume color tokens only")
+    require(not re.search(r"font-style:\s*italic|transition(?:-property)?:\s*all|100vw|overflow-x:\s*hidden|font-size:\s*0\b", styles, re.I), "Hallmark anti-slop guard failed")
+    require(all(value.strip().startswith("var(--font-") for value in re.findall(r"font-family:\s*([^;]+);", styles)), "theme CSS must consume font tokens only")
+    require(all("oklch(" in line for line in tokens.splitlines() if line.strip().startswith("--color-")), "all color tokens must use OKLCH")
+    require("section-index" not in index, "decorative numbered section eyebrows are not allowed")
+    require('class="mobile-nav"' in index and 'aria-controls="mobile-nav-panel"' in index, "accessible mobile navigation is required")
+    require(index.count('role="region"') >= 2 and index.count('tabindex="0"') >= 3, "scrollable data regions must be keyboard reachable")
+    require("winner-radar" in index and "dossier-radar" in index and "compare-radar" in index, "radar chart mounts are incomplete")
+    require("renderRadarChart" in app and "aria-valuetext" in app, "accessible visualisation controls are incomplete")
 
     analysis = json.loads((output / "data" / "analysis.json").read_text(encoding="utf-8"))
     players = analysis["players"]

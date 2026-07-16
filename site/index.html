@@ -2,12 +2,15 @@
 <html lang="ko" class="no-js">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="description" content="시대·포지션·대회 환경과 통계 불확실성을 함께 고려한 축구 GOAT 분석 보고서">
-    <meta name="theme-color" content="#102f3f">
-    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#0f281f">
+    <meta name="color-scheme" content="dark">
     <title>축구 GOAT 분석 보고서</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&amp;family=IBM+Plex+Sans+KR:wght@400;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="football-theme.css">
     <script>document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js');</script>
     <script src="app.js" defer></script>
   </head>
@@ -15,18 +18,28 @@
     <a class="skip-link" href="#main-content">본문으로 건너뛰기</a>
     <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
 
-    <header class="site-header">
+    <header class="site-header" aria-label="보고서 내비게이션">
       <a class="wordmark" href="#overview" aria-label="GOAT 인덱스 보고서 맨 위로">
         <span class="wordmark-mark" aria-hidden="true">G</span>
         <span><strong>GOAT INDEX</strong><small>Evidence, not allegiance</small></span>
       </a>
       <nav class="section-nav" aria-label="보고서 목차">
-        <a href="#ranking">순위</a>
-        <a href="#scenarios">시나리오</a>
-        <a href="#weight-lab">가중치 실험실</a>
-        <a href="#compare">비교</a>
-        <a href="#methodology">방법론</a>
+        <a href="#ranking" data-label="순위"><span class="sr-only">순위</span></a>
+        <a href="#scenarios" data-label="시나리오"><span class="sr-only">시나리오</span></a>
+        <a href="#weight-lab" data-label="가중치"><span class="sr-only">가중치 실험실</span></a>
+        <a href="#compare" data-label="비교"><span class="sr-only">비교</span></a>
+        <a href="#methodology" data-label="방법론"><span class="sr-only">방법론</span></a>
       </nav>
+      <details class="mobile-nav">
+        <summary aria-label="보고서 목차 열기" aria-expanded="false" aria-controls="mobile-nav-panel">목차</summary>
+        <nav id="mobile-nav-panel" aria-label="모바일 보고서 목차">
+          <a href="#ranking">순위</a>
+          <a href="#scenarios">시나리오</a>
+          <a href="#weight-lab">가중치</a>
+          <a href="#compare">비교</a>
+          <a href="#methodology">방법론</a>
+        </nav>
+      </details>
       <span class="edition" id="header-edition">데이터 확인 중</span>
     </header>
 
@@ -62,7 +75,7 @@
               <h1 id="report-title"></h1>
               <p class="hero-deck" id="report-subtitle"></p>
               <div class="hero-note">
-                <span class="note-index">01</span>
+                <span class="note-index">판정 원칙</span>
                 <p><strong>이 보고서의 출발점</strong><span id="coverage-note"></span></p>
               </div>
             </div>
@@ -84,6 +97,8 @@
                 <div><strong id="winner-score"></strong><span>종합 점수 / 100</span></div>
                 <div><strong id="winner-interval"></strong><span>불확실성 구간</span></div>
               </div>
+              <div class="hero-radar" id="winner-radar"></div>
+              <p class="chart-note">6개 평가 차원의 형태입니다. 도형의 면적은 종합 점수를 뜻하지 않습니다.</p>
               <p class="verdict-reading" id="verdict-reading"></p>
               <a class="text-link" href="#robustness">결론이 얼마나 견고한지 보기 <span aria-hidden="true">↓</span></a>
             </article>
@@ -100,7 +115,6 @@
         <section class="report-section executive" aria-labelledby="executive-title">
           <header class="section-heading split-heading">
             <div>
-              <p class="section-index">00 / EXECUTIVE READ</p>
               <h2 id="executive-title">순위보다 먼저 읽어야 할 결론</h2>
             </div>
             <p>한 숫자로 역사를 닫지 않고, 무엇을 바꾸면 결론이 바뀌는지까지 공개합니다.</p>
@@ -111,12 +125,13 @@
         <section class="report-section" id="ranking" aria-labelledby="ranking-title">
           <header class="section-heading split-heading">
             <div>
-              <p class="section-index">01 / BASELINE RANKING</p>
               <h2 id="ranking-title">균형 시나리오 후보 순위</h2>
             </div>
             <p>점수는 서로 다른 시대의 기록을 표준화한 비교 지수입니다. 작은 점수 차이는 서열보다 동률권으로 읽어야 합니다.</p>
           </header>
 
+          <div class="ranking-workbench">
+            <div class="ranking-board">
           <div class="toolbar" aria-label="순위표 필터">
             <label class="search-field">
               <span>선수 검색</span>
@@ -133,7 +148,8 @@
             <button class="button button-quiet" id="clear-filters" type="button">필터 초기화</button>
           </div>
 
-          <div class="table-shell">
+          <p class="table-scroll-hint" id="ranking-scroll-hint">작은 화면에서는 표를 좌우로 움직여 6차원 형상과 전체 수치를 확인할 수 있습니다.</p>
+          <div class="table-shell" role="region" aria-labelledby="ranking-title" aria-describedby="ranking-scroll-hint" tabindex="0">
             <table class="ranking-table">
               <caption>균형 모델에 따른 축구 GOAT 후보 순위</caption>
               <thead>
@@ -141,6 +157,7 @@
                   <th scope="col">순위</th>
                   <th scope="col">선수</th>
                   <th scope="col">시대 · 포지션</th>
+                  <th scope="col">6차원 형상</th>
                   <th scope="col">종합 점수</th>
                   <th scope="col">불확실성 구간</th>
                   <th scope="col">1위 강건성</th>
@@ -152,15 +169,23 @@
             <p class="empty-message" id="ranking-empty" hidden>조건에 맞는 후보가 없습니다.</p>
           </div>
           <p class="table-legend"><span><i class="legend-dot pareto-dot"></i>파레토 전선</span><span>구간 막대 = 하한–상한</span><span id="ranking-count"></span></p>
+            </div>
 
-          <article class="player-dossier" id="player-dossier" aria-live="polite" aria-labelledby="dossier-name">
+          <article class="player-dossier" id="player-dossier" tabindex="0" aria-labelledby="dossier-name">
             <div class="dossier-header">
               <div>
-                <p class="section-index">SELECTED CANDIDATE</p>
-                <h3 id="dossier-name"></h3>
+                <p class="dossier-label">선택 선수 분석</p>
+                <h3 id="dossier-name" tabindex="-1"></h3>
                 <p id="dossier-meta"></p>
               </div>
               <div class="dossier-rank"><span>균형 모델</span><strong id="dossier-rank"></strong></div>
+            </div>
+            <div class="dossier-visual-grid">
+              <div class="dossier-portrait" id="dossier-portrait" aria-hidden="true"></div>
+              <div class="radar-panel">
+                <div class="radar-chart radar-chart--large" id="dossier-radar"></div>
+                <p class="chart-note">레이더는 모든 축을 0–100으로 고정합니다. 축을 잘라 차이를 과장하지 않습니다.</p>
+              </div>
             </div>
             <div class="dossier-layout">
               <div>
@@ -180,12 +205,12 @@
             </div>
             <p class="evidence-note" id="evidence-note"></p>
           </article>
+          </div>
         </section>
 
         <section class="report-section scenario-section" id="scenarios" aria-labelledby="scenarios-title">
           <header class="section-heading split-heading">
             <div>
-              <p class="section-index">02 / VALUE JUDGMENTS</p>
               <h2 id="scenarios-title">‘위대함’의 정의를 바꾸면</h2>
             </div>
             <p>정점, 지속성, 국가대표, 클럽, 포지션 보정을 각각 강조해 가치 판단의 영향을 분리합니다.</p>
@@ -194,7 +219,7 @@
           <div class="scenario-panel" id="scenario-panel" role="tabpanel" tabindex="0">
             <div class="scenario-intro">
               <div>
-                <p class="scenario-label" id="scenario-label"></p>
+                <p class="scenario-status" id="scenario-label"></p>
                 <h3 id="scenario-winner"></h3>
                 <p id="scenario-description"></p>
               </div>
@@ -216,7 +241,6 @@
         <section class="report-section weight-lab" id="weight-lab" aria-labelledby="weight-title">
           <header class="section-heading split-heading">
             <div>
-              <p class="section-index">03 / INTERACTIVE MODEL</p>
               <h2 id="weight-title">당신의 GOAT 기준으로 다시 계산</h2>
             </div>
             <p>슬라이더의 원시 입력은 자동으로 100%에 맞춰 정규화됩니다. 후보의 기초 차원 점수는 그대로 유지됩니다.</p>
@@ -230,8 +254,8 @@
               <div id="weight-sliders"></div>
               <p class="lab-help" id="weight-help">키보드의 방향키로 1단위씩 정밀하게 조정할 수 있습니다.</p>
             </form>
-            <div class="custom-result" aria-live="polite" aria-atomic="true">
-              <p class="section-index">LIVE RE-RANKING</p>
+            <div class="custom-result">
+              <p class="dossier-label">실시간 재계산</p>
               <div class="custom-winner">
                 <span>현재 기준의 1위</span>
                 <h3 id="custom-winner-name"></h3>
@@ -246,7 +270,6 @@
         <section class="report-section" id="compare" aria-labelledby="compare-title">
           <header class="section-heading split-heading">
             <div>
-              <p class="section-index">04 / HEAD TO HEAD</p>
               <h2 id="compare-title">후보 2명 나란히 비교</h2>
             </div>
             <p>우열 한 줄 대신, 어느 차원에서 차이가 생기는지와 각 주장의 반대 근거를 함께 봅니다.</p>
@@ -256,7 +279,11 @@
             <span class="versus" aria-hidden="true">VS</span>
             <label><span>후보 B</span><select id="compare-b"></select></label>
           </div>
-          <div class="compare-summary" id="compare-summary" aria-live="polite"></div>
+          <div class="compare-summary" id="compare-summary"></div>
+          <div class="compare-radar-shell">
+            <div class="radar-chart radar-chart--compare" id="compare-radar"></div>
+            <p class="chart-note">같은 0–100 축에서 A는 실선·원형 점, B는 점선·사각형 점으로 표시합니다.</p>
+          </div>
           <div class="compare-chart" id="compare-chart"></div>
           <p class="chart-legend"><span><i class="compare-swatch swatch-a"></i><b id="legend-a"></b></span><span><i class="compare-swatch swatch-b"></i><b id="legend-b"></b></span></p>
         </section>
@@ -264,7 +291,6 @@
         <section class="report-section robustness" id="robustness" aria-labelledby="robustness-title">
           <header class="section-heading split-heading">
             <div>
-              <p class="section-index">05 / ROBUSTNESS</p>
               <h2 id="robustness-title">결론은 얼마나 잘 버티는가</h2>
             </div>
             <p>가중치와 입력값을 반복해서 흔들었을 때 1위·상위 3위에 남는 비율을 확인합니다. 높을수록 특정 설정에 덜 의존합니다.</p>
@@ -292,7 +318,6 @@
         <section class="report-section bias-section" id="bias" aria-labelledby="bias-title">
           <header class="section-heading split-heading">
             <div>
-              <p class="section-index">06 / FAIRNESS AUDIT</p>
               <h2 id="bias-title">시대와 포지션이 만드는 함정</h2>
             </div>
             <p>데이터가 많다는 것과 더 위대하다는 것은 같은 뜻이 아닙니다. 비교 불가능성을 숨기지 않는 것이 공정성의 첫 단계입니다.</p>
@@ -323,7 +348,6 @@
         <section class="report-section raw-section" id="raw-data" aria-labelledby="raw-title">
           <header class="section-heading split-heading">
             <div>
-              <p class="section-index">07 / DATA LEDGER</p>
               <h2 id="raw-title">원자료와 근거 추적</h2>
             </div>
             <p>가공 전 핵심 통계의 값·범위·출처·커버리지를 후보별로 확인할 수 있습니다.</p>
@@ -333,7 +357,8 @@
             <label class="search-field"><span>지표 찾기</span><input id="raw-search" type="search" autocomplete="off" placeholder="득점, 출전, 수상…"></label>
             <button class="button button-quiet" id="download-csv" type="button">표를 CSV로 저장</button>
           </div>
-          <div class="table-shell raw-table-shell">
+          <p class="table-scroll-hint" id="raw-scroll-hint">작은 화면에서는 원자료 표를 좌우로 움직여 범위·커버리지·출처를 확인할 수 있습니다.</p>
+          <div class="table-shell raw-table-shell" role="region" aria-labelledby="raw-title" aria-describedby="raw-scroll-hint" tabindex="0">
             <table class="raw-table">
               <caption id="raw-caption">선택한 후보의 원자료</caption>
               <thead><tr><th scope="col">지표</th><th scope="col">값</th><th scope="col">범위 · 단위</th><th scope="col">커버리지 · 신뢰도</th><th scope="col">출처</th></tr></thead>
@@ -346,7 +371,6 @@
         <section class="report-section method-section" id="methodology" aria-labelledby="method-title">
           <header class="section-heading split-heading">
             <div>
-              <p class="section-index">08 / METHODOLOGY</p>
               <h2 id="method-title">판정 기준과 재현 원칙</h2>
             </div>
             <p id="method-summary"></p>
@@ -370,21 +394,18 @@
         <section class="report-section sources-section" id="sources" aria-labelledby="sources-title">
           <header class="section-heading split-heading">
             <div>
-              <p class="section-index">09 / SOURCES</p>
               <h2 id="sources-title">출처와 데이터 범위</h2>
             </div>
             <p>링크는 원문 확인을 위한 것입니다. 서로 충돌하는 기록은 단일 값을 임의 선택하지 않고 커버리지와 근거 메모에 반영합니다.</p>
           </header>
           <div class="media-credit-heading">
             <div>
-              <p class="section-index">PORTRAIT CREDITS</p>
               <h3>선수 사진 라이선스</h3>
             </div>
             <p>프로필 사진은 Wikimedia Commons의 자유 라이선스 원본을 저장소에 보관해 배포합니다. 원작자·라이선스·원본 파일을 아래에 공개합니다.</p>
           </div>
           <ul class="photo-credit-list" id="photo-credit-list"></ul>
           <div class="data-source-heading">
-            <p class="section-index">ANALYSIS SOURCES</p>
             <h3>분석·기록 출처</h3>
           </div>
           <ol class="source-list" id="source-list"></ol>

@@ -18,6 +18,7 @@ except ImportError:  # pragma: no cover - exercised by the CLI invocation
 
 
 SITE_DIR = ROOT / "site"
+TOKENS_PATH = ROOT / "tokens.css"
 INPUTS = (
     MODEL_PATH,
     CANDIDATES_PATH,
@@ -26,6 +27,7 @@ INPUTS = (
     ROOT / "scripts" / "analyze.py",
     ROOT / "scripts" / "build_report.py",
     ROOT / "scripts" / "fetch_media.py",
+    TOKENS_PATH,
     *(sorted(path for path in SITE_DIR.rglob("*") if path.is_file())),
 )
 
@@ -63,6 +65,7 @@ def build(output: Path) -> Path:
     if output.exists():
         shutil.rmtree(output)
     shutil.copytree(SITE_DIR, output)
+    shutil.copy2(TOKENS_PATH, output / "tokens.css")
 
     timestamp = generated_at()
     analysis = build_analysis(timestamp)

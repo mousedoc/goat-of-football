@@ -32,12 +32,14 @@ def validate(output: Path) -> None:
         require((output / relative).is_file(), f"missing required file: {relative}")
 
     index = (output / "index.html").read_text(encoding="utf-8")
+    styles = (output / "styles.css").read_text(encoding="utf-8")
     require('lang="ko"' in index or "lang='ko'" in index, "index.html must declare Korean language")
     require("name=\"viewport\"" in index or "name='viewport'" in index, "viewport meta is required")
     require("<title>" in index, "document title is required")
     require("skip" in index.lower(), "a keyboard skip link is required")
     require(not re.search(r"(?:src|href)=[\"']/", index), "root-absolute asset URLs break project Pages")
     require("TODO" not in index and "Lorem ipsum" not in index, "placeholder copy found")
+    require(not re.search(r"(?<!sans-)serif\b|Georgia|Times New Roman|Batang|바탕", styles, re.I), "serif typography is not allowed")
 
     analysis = json.loads((output / "data" / "analysis.json").read_text(encoding="utf-8"))
     players = analysis["players"]
@@ -55,6 +57,15 @@ def validate(output: Path) -> None:
     for player in players:
         require(set(player["dimensions"]) == dimension_keys, f"{player['id']}: dimension mismatch")
         require(player["case_for"] and player["case_against"], f"{player['id']}: two-sided case required")
+        photo = player.get("photo", {})
+        asset_path = Path(str(photo.get("asset_path", "")))
+        require(asset_path.parts and not asset_path.is_absolute() and ".." not in asset_path.parts, f"{player['id']}: invalid photo path")
+        require(str(photo.get("asset_path", "")).startswith("assets/players/"), f"{player['id']}: photo must be local")
+        portrait = output / asset_path
+        require(portrait.is_file() and portrait.stat().st_size >= 1_024, f"{player['id']}: photo missing")
+        require(str(photo.get("source_url", "")).startswith("https://commons.wikimedia.org/"), f"{player['id']}: Commons source missing")
+        require(str(photo.get("license_url", "")).startswith("https://"), f"{player['id']}: photo license URL invalid")
+        require(bool(photo.get("author") and photo.get("license")), f"{player['id']}: photo attribution incomplete")
 
     for key, scenario in analysis["scenarios"].items():
         require(set(scenario["weights"]) == dimension_keys, f"{key}: weight keys mismatch")
@@ -74,9 +85,13 @@ def validate(output: Path) -> None:
             require(item.get("scope") and item.get("coverage"), f"{player['id']}.{label}: scope missing")
             require(set(item.get("source_ids", [])) <= source_ids, f"{player['id']}.{label}: unknown source")
 
+    media = analysis.get("media", [])
+    require(len(media) == len(players), "photo credit count must match candidate count")
+    require({entry.get("player_id") for entry in media} == set(ids), "photo credits must cover every player")
+
     manifest = json.loads((output / "data" / "manifest.json").read_text(encoding="utf-8"))
     require(manifest["analysis_cutoff"] == analysis["meta"]["as_of"], "manifest cutoff mismatch")
-    require(len(manifest["inputs"]) >= 4, "provenance manifest is incomplete")
+    require(len(manifest["inputs"]) >= 25, "provenance manifest is incomplete")
 
 
 def main() -> None:

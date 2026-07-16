@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import random
+import re
 from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -22,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MODEL_PATH = ROOT / "data" / "model.json"
 CANDIDATES_PATH = ROOT / "data" / "candidates.json"
 SOURCES_PATH = ROOT / "data" / "sources.json"
+MEDIA_PATH = ROOT / "data" / "media.json"
 
 
 class DataValidationError(ValueError):
@@ -135,6 +137,52 @@ def pareto_frontier(players: list[dict[str, Any]], dimension_keys: list[str]) ->
     return frontier
 
 
+def validate_media(media: dict[str, Any], player_ids: set[str]) -> dict[str, dict[str, Any]]:
+    """Validate locally vendored portraits and their mandatory attribution."""
+
+    entries = media.get("players", [])
+    media_by_player = {entry.get("player_id"): entry for entry in entries}
+    if len(media_by_player) != len(entries) or None in media_by_player:
+        raise DataValidationError("media player ids must be present and unique")
+    if set(media_by_player) != player_ids:
+        missing = sorted(player_ids - set(media_by_player))
+        extra = sorted(set(media_by_player) - player_ids)
+        raise DataValidationError(f"media coverage mismatch; missing={missing}, extra={extra}")
+
+    required = {
+        "wikidata_id",
+        "commons_file",
+        "asset_path",
+        "source_url",
+        "author",
+        "license",
+        "license_url",
+    }
+    for player_id, entry in media_by_player.items():
+        missing_fields = sorted(field for field in required if not entry.get(field))
+        if missing_fields:
+            raise DataValidationError(f"{player_id}: missing media fields {missing_fields}")
+        asset_path = Path(str(entry["asset_path"]))
+        if asset_path.is_absolute() or ".." in asset_path.parts:
+            raise DataValidationError(f"{player_id}: media asset path must be repository-relative")
+        if asset_path.as_posix() != str(entry["asset_path"]):
+            raise DataValidationError(f"{player_id}: media asset path must use POSIX separators")
+        if not str(entry["asset_path"]).startswith("assets/players/"):
+            raise DataValidationError(f"{player_id}: media asset must live under assets/players")
+        if asset_path.suffix.lower() not in {".jpg", ".jpeg", ".png", ".webp"}:
+            raise DataValidationError(f"{player_id}: unsupported portrait format")
+        local_asset = ROOT / "site" / asset_path
+        if not local_asset.is_file() or local_asset.stat().st_size < 1_024:
+            raise DataValidationError(f"{player_id}: portrait is missing or unexpectedly small")
+        for field in ("source_url", "license_url"):
+            if not str(entry[field]).startswith("https://"):
+                raise DataValidationError(f"{player_id}: {field} must use https")
+        position = str(entry.get("object_position", "50% 35%"))
+        if not re.fullmatch(r"(?:100|\d{1,2})% (?:100|\d{1,2})%", position):
+            raise DataValidationError(f"{player_id}: invalid object_position")
+    return media_by_player
+
+
 def validate_and_prepare(
     model: dict[str, Any], candidates: dict[str, Any], sources: dict[str, Any]
 ) -> tuple[list[str], list[dict[str, Any]], dict[str, dict[str, Any]]]:
@@ -194,7 +242,9 @@ def build_analysis(generated_at: str | None = None) -> dict[str, Any]:
     model = load_json(MODEL_PATH)
     candidates = load_json(CANDIDATES_PATH)
     sources = load_json(SOURCES_PATH)
+    media = load_json(MEDIA_PATH)
     dimension_keys, players, source_by_id = validate_and_prepare(model, candidates, sources)
+    media_by_player = validate_media(media, {player["id"] for player in players})
 
     base_weight_percent = {item["key"]: item["default_weight"] for item in model["dimensions"]}
     base_weights = normalized_weights(base_weight_percent, dimension_keys)
@@ -293,6 +343,11 @@ def build_analysis(generated_at: str | None = None) -> dict[str, Any]:
                 "position": player["position"],
                 "position_group": player["position_group"],
                 "color": player["color"],
+                "photo": {
+                    key: value
+                    for key, value in media_by_player[player_id].items()
+                    if key not in {"player_id", "download_url"}
+                },
                 "confidence": round(float(player["confidence"]) * 100),
                 "rank": base_rank_by_id[player_id],
                 "score": round(base_scores[player_id], 1),
@@ -425,6 +480,15 @@ def build_analysis(generated_at: str | None = None) -> dict[str, Any]:
         },
         "pareto_frontier": pareto_frontier(players, dimension_keys),
         "sources": [dict(source, accessed=sources["accessed"]) for source in source_by_id.values()],
+        "media": [
+            {
+                key: value
+                for key, value in entry.items()
+                if key != "download_url"
+            }
+            | {"accessed": media["accessed"]}
+            for entry in media["players"]
+        ],
         "glossary": [
             {"term": "Peak 3", "definition": "최고 3개 시즌의 역할·시대 상대 개인 기여를 요약한 범위"},
             {"term": "Prime 5", "definition": "최고 연속 5개 시즌의 개인 기여와 전술적 중심성"},

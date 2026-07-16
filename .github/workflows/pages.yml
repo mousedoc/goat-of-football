@@ -33,6 +33,9 @@ jobs:
       - name: Run analysis tests
         run: python -m unittest discover -s tests -v
 
+      - name: Verify vendored Commons portraits
+        run: python scripts/fetch_media.py --verify-only
+
       - name: Build the static report
         run: SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)" python scripts/build_report.py --output dist
 

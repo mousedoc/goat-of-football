@@ -12,13 +12,22 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 try:  # Package import for tests; script import for `python scripts/build_report.py`.
-    from .analyze import CANDIDATES_PATH, MODEL_PATH, ROOT, SOURCES_PATH, build_analysis
+    from .analyze import CANDIDATES_PATH, MEDIA_PATH, MODEL_PATH, ROOT, SOURCES_PATH, build_analysis
 except ImportError:  # pragma: no cover - exercised by the CLI invocation
-    from analyze import CANDIDATES_PATH, MODEL_PATH, ROOT, SOURCES_PATH, build_analysis
+    from analyze import CANDIDATES_PATH, MEDIA_PATH, MODEL_PATH, ROOT, SOURCES_PATH, build_analysis
 
 
 SITE_DIR = ROOT / "site"
-INPUTS = (MODEL_PATH, CANDIDATES_PATH, SOURCES_PATH, ROOT / "scripts" / "analyze.py")
+INPUTS = (
+    MODEL_PATH,
+    CANDIDATES_PATH,
+    SOURCES_PATH,
+    MEDIA_PATH,
+    ROOT / "scripts" / "analyze.py",
+    ROOT / "scripts" / "build_report.py",
+    ROOT / "scripts" / "fetch_media.py",
+    *(sorted(path for path in SITE_DIR.rglob("*") if path.is_file())),
+)
 
 
 def sha256(path: Path) -> str:

@@ -18,7 +18,7 @@
   --radius: 3px;
   --max: 1440px;
   --section-pad: clamp(4.75rem, 8vw, 8.5rem);
-  --serif: Georgia, "Times New Roman", "Batang", "바탕", serif;
+  --display: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --sans: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
 }
 
@@ -172,7 +172,7 @@ summary:focus-visible,
   color: var(--paper-light);
   background: var(--navy);
   border-radius: 50%;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.45rem;
   font-style: italic;
   font-weight: 700;
@@ -192,7 +192,7 @@ summary:focus-visible,
 .wordmark small {
   margin-top: 0.3rem;
   color: var(--ink-soft);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.68rem;
   font-style: italic;
 }
@@ -254,7 +254,7 @@ summary:focus-visible,
 .load-state h1 {
   max-width: 720px;
   margin: 0.25rem 0 0.5rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2.2rem, 5vw, 5.5rem);
   font-weight: 500;
   line-height: 1.05;
@@ -300,7 +300,7 @@ summary:focus-visible,
   border-radius: 50%;
   color: #fff;
   background: var(--coral);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 3rem;
 }
 
@@ -376,7 +376,7 @@ summary:focus-visible,
 .hero-copy h1 {
   max-width: 800px;
   margin: 1rem 0 1.25rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(3.3rem, 7.2vw, 7.4rem);
   font-weight: 500;
   letter-spacing: -0.055em;
@@ -387,7 +387,7 @@ summary:focus-visible,
   max-width: 710px;
   margin: 0;
   color: rgba(247, 243, 235, 0.76);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(1.15rem, 1.75vw, 1.55rem);
   line-height: 1.55;
 }
@@ -403,7 +403,7 @@ summary:focus-visible,
 
 .note-index {
   color: var(--coral);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.3rem;
   font-style: italic;
 }
@@ -491,14 +491,14 @@ summary:focus-visible,
   border-radius: 50%;
   color: #fff;
   background: var(--coral);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.7rem;
   font-style: italic;
 }
 
 .verdict-player h2 {
   margin: 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2.2rem, 4vw, 4rem);
   font-weight: 500;
   letter-spacing: -0.045em;
@@ -533,7 +533,7 @@ summary:focus-visible,
 
 .verdict-scoreline strong {
   color: var(--navy);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.85rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -590,7 +590,7 @@ summary:focus-visible,
 
 .snapshot strong {
   color: #fff;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.8rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -626,7 +626,7 @@ summary:focus-visible,
 .section-heading h2 {
   max-width: 880px;
   margin: 0.7rem 0 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2.45rem, 5vw, 5.4rem);
   font-weight: 500;
   letter-spacing: -0.052em;
@@ -663,7 +663,7 @@ summary:focus-visible,
   top: 1.1rem;
   right: 1.15rem;
   color: var(--line-dark);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.9rem;
   font-style: italic;
 }
@@ -671,7 +671,7 @@ summary:focus-visible,
 .insight-card h3 {
   margin: 0 0 1rem;
   padding-right: 2rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(1.45rem, 2vw, 2rem);
   font-weight: 500;
   line-height: 1.25;
@@ -692,7 +692,7 @@ summary:focus-visible,
 }
 
 .insight-stat strong {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 3rem;
   font-weight: 500;
   line-height: 1;
@@ -862,7 +862,7 @@ tbody tr:last-child td {
 }
 
 .rank-number {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.35rem;
   font-style: italic;
 }
@@ -882,14 +882,40 @@ tbody tr:last-child td {
   border-radius: 50%;
   color: #fff;
   background: var(--player-color, var(--navy-2));
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1rem;
   font-weight: 700;
+  overflow: hidden;
+  border: 1px solid rgba(16, 47, 63, 0.16);
+  background: color-mix(in srgb, var(--player-color, var(--navy-2)) 18%, var(--paper-light));
+}
+
+.player-sigil img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--photo-position, 50% 35%);
+  filter: saturate(0.9) contrast(1.03);
+}
+
+.player-sigil.has-fallback {
+  background: var(--player-color, var(--navy-2));
+}
+
+.winner-portrait {
+  flex: 0 0 auto;
+}
+
+.player-sigil--hero {
+  width: clamp(72px, 7vw, 96px);
+  border: 3px solid rgba(255, 255, 255, 0.88);
+  box-shadow: 0 10px 28px rgba(16, 47, 63, 0.2);
 }
 
 .player-cell strong {
   display: block;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.1rem;
   font-weight: 600;
   line-height: 1.2;
@@ -909,7 +935,7 @@ tbody tr:last-child td {
 
 .score-cell strong {
   color: var(--navy);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.45rem;
   font-weight: 500;
 }
@@ -1063,7 +1089,7 @@ tbody tr:last-child td {
 
 .dossier-header h3 {
   margin: 0.45rem 0 0.25rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2.2rem, 4vw, 4.2rem);
   font-weight: 500;
   letter-spacing: -0.04em;
@@ -1089,7 +1115,7 @@ tbody tr:last-child td {
 }
 
 .dossier-rank strong {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 3rem;
   font-weight: 500;
   line-height: 1;
@@ -1148,7 +1174,7 @@ tbody tr:last-child td {
 .dimension-row output,
 .dimension-row > strong {
   text-align: right;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.9rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -1278,7 +1304,7 @@ tbody tr:last-child td {
 
 .scenario-intro h3 {
   margin: 0 0 0.7rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2.4rem, 5vw, 5rem);
   font-weight: 500;
   letter-spacing: -0.045em;
@@ -1301,7 +1327,7 @@ tbody tr:last-child td {
   display: block;
   margin-bottom: 0.3rem;
   color: #fff;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.8rem;
   font-weight: 500;
 }
@@ -1338,13 +1364,13 @@ tbody tr:last-child td {
 .scenario-ranking li::before {
   content: counter(ranking, decimal-leading-zero);
   color: var(--teal-light);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.9rem;
   font-style: italic;
 }
 
 .scenario-ranking strong {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.1rem;
   font-weight: 500;
 }
@@ -1393,7 +1419,7 @@ tbody tr:last-child td {
 
 .composition-row strong {
   text-align: right;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.85rem;
   font-weight: 500;
 }
@@ -1439,7 +1465,7 @@ tbody tr:last-child td {
 }
 
 .lab-total strong {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.7rem;
   font-weight: 500;
 }
@@ -1515,7 +1541,7 @@ input[type="range"]::-moz-range-thumb {
 
 .slider-value {
   text-align: right;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1rem;
   font-variant-numeric: tabular-nums;
 }
@@ -1547,7 +1573,7 @@ input[type="range"]::-moz-range-thumb {
 
 .custom-winner h3 {
   margin: 0.35rem 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2.4rem, 5vw, 4.3rem);
   font-weight: 500;
   letter-spacing: -0.045em;
@@ -1562,7 +1588,7 @@ input[type="range"]::-moz-range-thumb {
 
 .custom-winner p strong {
   color: var(--coral);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.7rem;
   font-weight: 500;
 }
@@ -1587,12 +1613,12 @@ input[type="range"]::-moz-range-thumb {
 .custom-ranking li::before {
   content: counter(custom, decimal-leading-zero);
   color: var(--ink-soft);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-style: italic;
 }
 
 .custom-ranking strong {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.95rem;
   font-weight: 600;
 }
@@ -1625,7 +1651,7 @@ input[type="range"]::-moz-range-thumb {
   border: 1px solid var(--line-dark);
   border-radius: 50%;
   color: var(--coral);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.8rem;
   font-style: italic;
 }
@@ -1647,7 +1673,7 @@ input[type="range"]::-moz-range-thumb {
 
 .compare-card h3 {
   margin: 0.3rem 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2rem, 4vw, 4rem);
   font-weight: 500;
   letter-spacing: -0.04em;
@@ -1664,7 +1690,7 @@ input[type="range"]::-moz-range-thumb {
   display: block;
   margin-top: 1rem;
   color: var(--navy);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 2rem;
   font-weight: 500;
 }
@@ -1705,7 +1731,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .compare-side strong {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.9rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -1786,7 +1812,7 @@ input[type="range"]::-moz-range-thumb {
   display: block;
   margin: 1rem 0 0.5rem;
   color: var(--navy);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2rem, 4vw, 3.6rem);
   font-weight: 500;
   line-height: 1;
@@ -1815,7 +1841,7 @@ input[type="range"]::-moz-range-thumb {
 
 .subheading-row h3 {
   margin: 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.45rem;
   font-weight: 500;
 }
@@ -1835,7 +1861,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .probability-row > span {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.92rem;
 }
 
@@ -1853,7 +1879,7 @@ input[type="range"]::-moz-range-thumb {
 
 .probability-row strong {
   text-align: right;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.8rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -1884,13 +1910,13 @@ input[type="range"]::-moz-range-thumb {
   border: 1px solid var(--gold);
   border-radius: 50%;
   color: #755813;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-style: italic;
 }
 
 .pareto-box h3 {
   margin: 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.25rem;
   font-weight: 500;
 }
@@ -1941,13 +1967,13 @@ input[type="range"]::-moz-range-thumb {
   border: 1px solid var(--coral);
   border-radius: 50%;
   color: var(--coral);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-style: italic;
 }
 
 .bias-grid h3 {
   margin: 0 0 1rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.45rem;
   font-weight: 500;
   line-height: 1.25;
@@ -1971,7 +1997,7 @@ input[type="range"]::-moz-range-thumb {
 
 .caveat-callout h3 {
   margin: 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.8rem;
   font-weight: 500;
 }
@@ -1994,14 +2020,14 @@ input[type="range"]::-moz-range-thumb {
 
 .raw-table td:first-child {
   min-width: 180px;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.95rem;
   font-weight: 600;
 }
 
 .raw-table td:nth-child(2) {
   color: var(--navy);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.05rem;
   font-weight: 600;
 }
@@ -2034,7 +2060,7 @@ input[type="range"]::-moz-range-thumb {
 
 .method-layout h3 {
   margin: 0 0 1.2rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.45rem;
   font-weight: 500;
 }
@@ -2061,7 +2087,7 @@ input[type="range"]::-moz-range-thumb {
   top: 0.95rem;
   left: 0;
   color: var(--teal);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-style: italic;
 }
 
@@ -2085,7 +2111,7 @@ input[type="range"]::-moz-range-thumb {
   justify-content: space-between;
   gap: 1rem;
   margin: 0 0 0.5rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.05rem;
   font-weight: 600;
 }
@@ -2143,7 +2169,7 @@ input[type="range"]::-moz-range-thumb {
 
 .glossary dt {
   padding-right: 1rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 600;
 }
 
@@ -2153,6 +2179,93 @@ input[type="range"]::-moz-range-thumb {
 
 .sources-section {
   padding-bottom: 5rem;
+}
+
+.media-credit-heading {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.75fr) minmax(280px, 1.25fr);
+  gap: clamp(2rem, 6vw, 7rem);
+  align-items: end;
+  margin-bottom: 1.5rem;
+}
+
+.media-credit-heading h3,
+.data-source-heading h3 {
+  margin: 0.35rem 0 0;
+  font-family: var(--display);
+  font-size: clamp(1.45rem, 2.4vw, 2.35rem);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+}
+
+.media-credit-heading > p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.74rem;
+}
+
+.photo-credit-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  border-top: 2px solid var(--ink);
+  list-style: none;
+}
+
+.photo-credit-item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 0.75rem 0.9rem;
+  align-items: center;
+  padding: 1rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.photo-credit-item:nth-child(3n) {
+  border-right: 0;
+}
+
+.player-sigil--credit {
+  grid-row: 1 / span 2;
+  width: 48px;
+}
+
+.photo-credit-item strong,
+.photo-credit-item span {
+  display: block;
+}
+
+.photo-credit-item strong {
+  font-family: var(--display);
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.photo-credit-item span {
+  margin-top: 0.2rem;
+  color: var(--ink-soft);
+  font-size: 0.58rem;
+  line-height: 1.35;
+}
+
+.photo-credit-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.8rem;
+  grid-column: 2;
+}
+
+.photo-credit-links a {
+  color: var(--navy-2);
+  font-size: 0.61rem;
+  font-weight: 750;
+  text-underline-offset: 0.18rem;
+}
+
+.data-source-heading {
+  margin: clamp(3.5rem, 6vw, 6rem) 0 1.25rem;
 }
 
 .source-list {
@@ -2176,12 +2289,12 @@ input[type="range"]::-moz-range-thumb {
 .source-item::before {
   content: "[" counter(source, decimal-leading-zero) "]";
   color: var(--ink-soft);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.72rem;
 }
 
 .source-item strong {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.95rem;
   font-weight: 600;
 }
@@ -2292,6 +2405,18 @@ input[type="range"]::-moz-range-thumb {
     grid-template-columns: 1fr;
   }
 
+  .photo-credit-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .photo-credit-item:nth-child(3n) {
+    border-right: 1px solid var(--line);
+  }
+
+  .photo-credit-item:nth-child(2n) {
+    border-right: 0;
+  }
+
   .source-item {
     grid-template-columns: 45px minmax(230px, 1fr) minmax(150px, 0.55fr) 30px;
   }
@@ -2348,7 +2473,8 @@ input[type="range"]::-moz-range-thumb {
   .split-heading,
   .scenario-intro,
   .scenario-grid,
-  .method-layout {
+  .method-layout,
+  .media-credit-heading {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
@@ -2498,6 +2624,10 @@ input[type="range"]::-moz-range-thumb {
 
   .verdict-player h2 {
     font-size: 2.15rem;
+  }
+
+  .player-sigil--hero {
+    width: 64px;
   }
 
   .verdict-scoreline strong {
@@ -2662,6 +2792,16 @@ input[type="range"]::-moz-range-thumb {
   .glossary dd {
     padding-top: 0;
     border-top: 0;
+  }
+
+  .photo-credit-list {
+    grid-template-columns: 1fr;
+  }
+
+  .photo-credit-item,
+  .photo-credit-item:nth-child(2n),
+  .photo-credit-item:nth-child(3n) {
+    border-right: 0;
   }
 
   .source-item {

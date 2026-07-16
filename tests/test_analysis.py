@@ -9,12 +9,14 @@ from pathlib import Path
 from scripts.analyze import (
     CANDIDATES_PATH,
     MODEL_PATH,
+    MEDIA_PATH,
     SOURCES_PATH,
     DataValidationError,
     build_analysis,
     load_json,
     normalized_weights,
     validate_and_prepare,
+    validate_media,
 )
 from scripts.build_report import build
 from scripts.validate_report import validate
@@ -38,6 +40,8 @@ class AnalysisTests(unittest.TestCase):
         for player in result["players"]:
             self.assertLessEqual(player["score_low"], player["score"])
             self.assertLessEqual(player["score"], player["score_high"])
+            self.assertTrue(player["photo"]["asset_path"].startswith("assets/players/"))
+        self.assertEqual(len(result["media"]), len(result["players"]))
 
     def test_invalid_dimension_range_is_rejected(self) -> None:
         model = load_json(MODEL_PATH)
@@ -51,6 +55,12 @@ class AnalysisTests(unittest.TestCase):
     def test_weights_are_normalized(self) -> None:
         weights = normalized_weights({"a": 2, "b": 3}, ["a", "b"])
         self.assertEqual(weights, {"a": 0.4, "b": 0.6})
+
+    def test_media_coverage_is_complete(self) -> None:
+        candidates = load_json(CANDIDATES_PATH)
+        media = load_json(MEDIA_PATH)
+        expected = {player["id"] for player in candidates["players"]}
+        self.assertEqual(set(validate_media(media, expected)), expected)
 
     def test_built_site_validates(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

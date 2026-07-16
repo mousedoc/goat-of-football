@@ -34,11 +34,13 @@
 ```text
 data/
   candidates.json   # 선수별 양방향 근거, 핵심 사실, 차원 범위
+  media.json        # 선수 사진 원본·작가·라이선스·로컬 경로 장부
   model.json        # 가중치, 시나리오, 표집 규칙
   sources.json      # 공식·학술·보완 출처 장부
 scripts/
   analyze.py        # 검증, 점수 계산, Monte Carlo, Pareto 분석
   build_report.py   # 정적 사이트와 입력 해시 manifest 생성
+  fetch_media.py    # 감사된 Commons 사진의 로컬 갱신·무결성 검사
   validate_report.py# Pages 경로·스키마·출처·접근성 계약 검사
 site/               # 의존성 없는 HTML/CSS/JavaScript 보고서
 tests/              # 재현성·불변조건·실패 경로 테스트
@@ -52,6 +54,7 @@ Python 3.11 이상이 필요합니다.
 
 ```powershell
 python -m unittest discover -s tests -v
+python scripts/fetch_media.py --verify-only
 python scripts/build_report.py --output dist
 python scripts/validate_report.py dist
 python -m http.server 4173 --directory dist
@@ -69,6 +72,8 @@ python -m http.server 4173 --directory dist
 4. 테스트와 빌드 검증을 통과시킵니다.
 5. 생성된 `dist/data/manifest.json`의 SHA-256 입력 장부로 배포를 추적합니다.
 
+선수 사진은 페이지가 Wikimedia 서버를 직접 핫링크하지 않도록 `site/assets/players/`에 보관합니다. `data/media.json`에는 Commons 원본 파일, 저작자, 라이선스와 취득 URL을 기록합니다. 검토 후 사진을 갱신할 때만 `python scripts/fetch_media.py`를 실행하고, 일반 CI·배포에서는 커밋된 파일의 무결성만 검사합니다.
+
 후보를 추가하거나 점수를 반박할 때는 선수 이름보다 먼저 어느 차원, 어느 범위, 어느 출처가 바뀌어야 하는지를 제시해 주세요.
 
 ## 범위와 한계
@@ -79,4 +84,4 @@ python -m http.server 4173 --directory dist
 
 ## 라이선스와 인용
 
-코드는 [MIT License](LICENSE), 이 저장소가 작성한 보고서 문구와 구조화된 평가 주석은 [CC BY 4.0](DATA_LICENSE.md)으로 제공합니다. FIFA, UEFA, CONMEBOL, France Football, RSSSF, StatsBomb 등 제3자 사실·상표·링크의 권리는 각 권리자에게 있으며 원자료 재배포 라이선스를 부여하지 않습니다.
+코드는 [MIT License](LICENSE), 이 저장소가 작성한 보고서 문구와 구조화된 평가 주석은 [CC BY 4.0](DATA_LICENSE.md)으로 제공합니다. 선수 사진은 각기 `data/media.json` 및 공개 보고서에 표시한 Commons 라이선스를 따릅니다. FIFA, UEFA, CONMEBOL, France Football, RSSSF, StatsBomb 등 제3자 사실·상표·링크의 권리는 각 권리자에게 있으며 원자료 재배포 라이선스를 부여하지 않습니다.

@@ -100,6 +100,19 @@
     }
   }
 
+  function safeAssetPath(value) {
+    if (typeof value !== "string") return null;
+    const path = value.trim().replaceAll("\\", "/");
+    if (!path || path.startsWith("/") || path.includes("..") || /^[a-z][a-z0-9+.-]*:/i.test(path)) return null;
+    return path;
+  }
+
+  function safeObjectPosition(value) {
+    return typeof value === "string" && /^(?:100|\d{1,2})% (?:100|\d{1,2})%$/.test(value)
+      ? value
+      : "50% 35%";
+  }
+
   function playerName(player) {
     return player?.name_ko || player?.name_en || player?.name || player?.id || "이름 미상";
   }
@@ -342,10 +355,26 @@
   }
 
   function makePlayerSigil(player) {
-    const sigil = element("span", "player-sigil", initials(player));
+    const sigil = element("span", "player-sigil");
     sigil.setAttribute("aria-hidden", "true");
     sigil.style.setProperty("--player-color", safeColor(player.color));
     sigil.style.color = contrastColor(player.color);
+    const assetPath = safeAssetPath(player?.photo?.asset_path);
+    if (assetPath) {
+      const image = element("img");
+      image.src = `./${assetPath}`;
+      image.alt = "";
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.width = 96;
+      image.height = 96;
+      image.style.setProperty("--photo-position", safeObjectPosition(player.photo.object_position));
+      sigil.classList.add("has-photo");
+      sigil.append(image);
+    } else {
+      sigil.textContent = initials(player);
+      sigil.classList.add("has-fallback");
+    }
     return sigil;
   }
 
@@ -384,6 +413,13 @@
     setText("#snapshot-dimensions", fmtCount(state.data.methodology.dimensions.length));
     setText("#snapshot-iterations", fmtCount(meta.iterations));
     setText("#snapshot-version", meta.method_version || "—");
+    const winnerPortrait = $("#winner-portrait");
+    clear(winnerPortrait);
+    const heroSigil = makePlayerSigil(winner);
+    heroSigil.classList.add("player-sigil--hero");
+    const heroImage = $("img", heroSigil);
+    if (heroImage) heroImage.loading = "eager";
+    winnerPortrait.append(heroSigil);
 
     const overlaps = second ? top.score_low <= second.score_high && second.score_low <= top.score_high : false;
     setText("#verdict-title", finding.label || "가장 높은 종합 점수");
@@ -1022,6 +1058,42 @@
   }
 
   function renderSources() {
+    const credits = $("#photo-credit-list");
+    clear(credits);
+    const media = Array.isArray(state.data.media) ? state.data.media : [];
+    media.forEach((entry) => {
+      const player = state.playersById.get(entry.player_id);
+      const item = element("li", "photo-credit-item");
+      const portrait = player ? makePlayerSigil(player) : element("span", "player-sigil has-fallback", "?");
+      portrait.classList.add("player-sigil--credit");
+      const copy = element("div");
+      append(copy,
+        element("strong", "", player ? playerName(player) : entry.player_id || "선수"),
+        element("span", "", entry.author || "작가 미기재"),
+      );
+      const links = element("div", "photo-credit-links");
+      const licenseUrl = safeUrl(entry.license_url);
+      const sourceUrl = safeUrl(entry.source_url);
+      if (licenseUrl) {
+        const license = element("a", "", entry.license || "라이선스");
+        license.href = licenseUrl;
+        license.target = "_blank";
+        license.rel = "license noopener noreferrer";
+        links.append(license);
+      }
+      if (sourceUrl) {
+        const original = element("a", "", "원본 ↗");
+        original.href = sourceUrl;
+        original.target = "_blank";
+        original.rel = "noopener noreferrer";
+        original.setAttribute("aria-label", `${player ? playerName(player) : "선수"} 사진 원본 파일 새 창에서 열기`);
+        links.append(original);
+      }
+      append(item, portrait, copy, links);
+      credits.append(item);
+    });
+    if (!media.length) credits.append(element("li", "empty-message", "사진 크레딧이 데이터에 포함되지 않았습니다."));
+
     const list = $("#source-list");
     clear(list);
     state.data.sources.forEach((source) => {

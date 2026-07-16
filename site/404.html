@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#102f3f">
+    <meta name="robots" content="noindex">
+    <title>페이지를 찾을 수 없습니다 · GOAT INDEX</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      .not-found {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.6fr);
+        gap: clamp(3rem, 9vw, 10rem);
+        align-items: center;
+        min-height: 100vh;
+        padding: clamp(2rem, 6vw, 6rem) max(1.25rem, calc((100vw - 1250px) / 2));
+        color: #f7f3eb;
+        background:
+          radial-gradient(circle at 82% 20%, rgba(39, 136, 134, 0.28), transparent 30%),
+          linear-gradient(115deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+          #102f3f;
+        background-size: auto, 58px 58px, auto;
+      }
+      .not-found h1 {
+        max-width: 850px;
+        margin: 1rem 0 1.5rem;
+        font-family: var(--serif);
+        font-size: clamp(3.6rem, 9vw, 8.5rem);
+        font-weight: 500;
+        letter-spacing: -0.06em;
+        line-height: 0.92;
+      }
+      .not-found-copy > p:not(.eyebrow) {
+        max-width: 610px;
+        color: rgba(255,255,255,0.66);
+        font-family: var(--serif);
+        font-size: clamp(1rem, 2vw, 1.35rem);
+      }
+      .not-found .button {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 1.5rem;
+        color: #102f3f;
+        background: #fffdf8;
+        text-decoration: none;
+      }
+      .error-score {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: min(100%, 410px);
+        aspect-ratio: 1;
+        border: 1px solid rgba(255,255,255,0.22);
+        border-radius: 50%;
+      }
+      .error-score::before,
+      .error-score::after {
+        content: "";
+        position: absolute;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 50%;
+      }
+      .error-score::before { inset: 13%; }
+      .error-score::after { inset: 27%; }
+      .error-score strong {
+        position: relative;
+        z-index: 1;
+        color: #9dd7cb;
+        font-family: var(--serif);
+        font-size: clamp(4rem, 10vw, 8rem);
+        font-style: italic;
+        font-weight: 500;
+      }
+      .error-score span {
+        position: absolute;
+        bottom: 20%;
+        color: rgba(255,255,255,0.48);
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+      }
+      @media (max-width: 720px) {
+        .not-found { grid-template-columns: 1fr; }
+        .error-score { width: min(65vw, 300px); justify-self: center; }
+      }
+      @media print {
+        .not-found { color: #000; background: #fff; }
+        .not-found-copy > p:not(.eyebrow), .error-score span { color: #444; }
+        .error-score strong { color: #000; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="not-found">
+      <div class="not-found-copy">
+        <p class="eyebrow light">404 / OUT OF PLAY</p>
+        <h1>이 페이지는 경기장 밖입니다</h1>
+        <p>요청한 주소에서 보고서를 찾지 못했습니다. 메인 분석으로 돌아가 순위와 근거를 확인해 주세요.</p>
+        <a class="button" href="./">분석 보고서로 돌아가기&nbsp; →</a>
+      </div>
+      <div class="error-score" aria-hidden="true"><strong>404</strong><span>PAGE NOT FOUND</span></div>
+    </main>
+  </body>
+</html>

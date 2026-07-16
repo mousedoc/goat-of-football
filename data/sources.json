@@ -1,0 +1,229 @@
+{
+  "accessed": "2026-07-16",
+  "sources": [
+    {
+      "id": "ballon-history",
+      "title": "History of the Ballon d'Or: all winners",
+      "publisher": "UEFA / France Football",
+      "url": "https://www.uefa.com/ballondor/news/0287-195e642735da-0594342b9554-1000--history-of-the-ballon-d-or-all-the-winners/",
+      "scope": "수상 연도와 수상 횟수의 공식 교차검증. 투표 결과를 경기력의 완전한 측정치로 취급하지 않음",
+      "tier": "official"
+    },
+    {
+      "id": "ballon-eligibility",
+      "title": "Ballon d'Or France Football: les petits secrets des grandes annonces",
+      "publisher": "France Football",
+      "url": "https://www.francefootball.fr/news/Ballon-d-or-france-football-les-petits-secrets-des-grandes-annonces/1259953",
+      "scope": "1995년 전후 수상 자격 변화 확인. 비유럽 과거 선수의 0회를 0점으로 코딩하지 않는 근거",
+      "tier": "official"
+    },
+    {
+      "id": "dream-team",
+      "title": "Le vote de France Football pour la Ballon d'Or Dream Team",
+      "publisher": "France Football",
+      "url": "https://www.francefootball.fr/news/Le-vote-de-france-football-pour-la-ballon-d-or-dream-team/1205869",
+      "scope": "포지션별 역사 후보 발굴용 전문가 패널. 최종 정답이나 점수 입력으로는 사용하지 않음",
+      "tier": "official"
+    },
+    {
+      "id": "fifa-2022",
+      "title": "FIFA World Cup Qatar 2022 statistics",
+      "publisher": "FIFA",
+      "url": "https://www.fifa.com/en/tournaments/mens/worldcup/qatar2022/stats",
+      "scope": "2022 월드컵 경기·선수 공식 통계와 대회 맥락",
+      "tier": "official"
+    },
+    {
+      "id": "fifa-2026",
+      "title": "FIFA World Cup 2026 player statistics",
+      "publisher": "FIFA",
+      "url": "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/statistics/player-statistics",
+      "scope": "진행 중 대회 상태 확인 전용. 2026-06-10 이후 결과는 확정 점수에서 제외",
+      "tier": "official"
+    },
+    {
+      "id": "fifa-pele",
+      "title": "A tribute to Pelé",
+      "publisher": "FIFA",
+      "url": "https://www.fifa.com/en/articles/a-tribute-to-pele-brazil-santos-new-york-cosmos-legend-fifa-world-cup",
+      "scope": "펠레의 월드컵 경력과 공식 역사 맥락",
+      "tier": "official"
+    },
+    {
+      "id": "fifa-maradona",
+      "title": "Maradona, England and the Hand of God",
+      "publisher": "FIFA",
+      "url": "https://www.fifa.com/en/articles/diego-maradona-argentina-england-hand-of-god-1986",
+      "scope": "1986 월드컵 피크의 공식 역사 자료. 단일 경기 서사를 시즌 전체 점수로 직접 환산하지 않음",
+      "tier": "official"
+    },
+    {
+      "id": "fifa-ronaldo",
+      "title": "Ronaldo's 2002 World Cup story",
+      "publisher": "FIFA",
+      "url": "https://www.fifa.com/en/tournaments/mens/worldcup/2002korea-japan/news/ronaldo-comeback-king-2002-world-cup",
+      "scope": "호나우두의 2002 월드컵 복귀·득점 맥락",
+      "tier": "official"
+    },
+    {
+      "id": "fifa-puskas",
+      "title": "Ferenc Puskás, a footballing legend",
+      "publisher": "FIFA",
+      "url": "https://www.fifa.com/en/tournaments/mens/worldcup/articles/ferenc-puskas-hungary-real-madrid-legend",
+      "scope": "푸슈카시의 대표팀과 클럽 역사 맥락",
+      "tier": "official"
+    },
+    {
+      "id": "fifa-yashin",
+      "title": "Lev Yashin: the Black Spider",
+      "publisher": "FIFA",
+      "url": "https://www.fifa.com/en/tournaments/mens/worldcup/articles/lev-yashin-soviet-union-goalkeeper-black-spider",
+      "scope": "야신의 국제대회·골키퍼 역할에 관한 공식 역사 자료",
+      "tier": "official"
+    },
+    {
+      "id": "fifa-archives",
+      "title": "FIFA World Cup archive",
+      "publisher": "FIFA",
+      "url": "https://www.fifa.com/en/tournaments/mens/worldcup",
+      "scope": "역대 월드컵 대회 결과·선수·수상 사실 확인",
+      "tier": "official"
+    },
+    {
+      "id": "uefa-ucl",
+      "title": "UEFA Champions League all-time player rankings",
+      "publisher": "UEFA",
+      "url": "https://www.uefa.com/uefachampionsleague/history/rankings/",
+      "scope": "유러피언컵·챔피언스리그 공식 출전·득점 기록 확인",
+      "tier": "official"
+    },
+    {
+      "id": "uefa-ucl-scorers",
+      "title": "Champions League all-time top scorers",
+      "publisher": "UEFA",
+      "url": "https://www.uefa.com/uefachampionsleague/news/0257-0e910cf2494a-5185150de9d4-1000--champions-league-all-time-top-scorers-cristiano-ronaldo-/",
+      "scope": "대회 역대 득점과 초기·현대 판본의 경기 수 차이 확인",
+      "tier": "official"
+    },
+    {
+      "id": "uefa-format",
+      "title": "Champions League all-time top scorers and competition context",
+      "publisher": "UEFA",
+      "url": "https://www.uefa.com/uefachampionsleague/news/0257-0e910cf2494a-5185150de9d4-1000--champions-league-all-time-top-scorers-cristiano-ronaldo-/",
+      "scope": "초기 유러피언컵과 현대 대회의 경기 수·형식 차이를 총계 해석에 반영",
+      "tier": "official"
+    },
+    {
+      "id": "uefa-euro",
+      "title": "UEFA EURO all-time statistics",
+      "publisher": "UEFA",
+      "url": "https://www.uefa.com/uefaeuro/history/rankings/",
+      "scope": "EURO 본선 역대 공식 기록 확인",
+      "tier": "official"
+    },
+    {
+      "id": "uefa-coefficients",
+      "title": "UEFA association club coefficients",
+      "publisher": "UEFA",
+      "url": "https://www.uefa.com/nationalassociations/uefarankings/country/",
+      "scope": "유럽 현대 구간의 리그 강도 외부 검증. 남미나 대회 창설 이전 시대에 소급하지 않음",
+      "tier": "official"
+    },
+    {
+      "id": "conmebol-copa",
+      "title": "Copa América historical records",
+      "publisher": "CONMEBOL",
+      "url": "https://copaamerica.com/en/news/copa-america-players-most-appearances-top-10",
+      "scope": "코파 아메리카 역대 출전과 대회 기록의 공식 확인",
+      "tier": "official"
+    },
+    {
+      "id": "conmebol-history",
+      "title": "CONMEBOL Libertadores history",
+      "publisher": "CONMEBOL",
+      "url": "https://www.conmebollibertadores.com/",
+      "scope": "남미 최상위 클럽대항전 우승·역사 맥락",
+      "tier": "official"
+    },
+    {
+      "id": "conmebol-assists",
+      "title": "Copa América assists record and coverage note",
+      "publisher": "CONMEBOL",
+      "url": "https://copaamerica.com/en/news/james-record-assists-copa-america-colombia-uruguay",
+      "scope": "도움 집계가 2011년부터라는 공식 주의사항. 이전 결측치를 0으로 취급하지 않는 근거",
+      "tier": "official"
+    },
+    {
+      "id": "rsssf-players",
+      "title": "RSSSF player archive",
+      "publisher": "Rec.Sport.Soccer Statistics Foundation",
+      "url": "https://www.rsssf.org/players/",
+      "scope": "공식 연맹 자료가 불완전한 역사 선수의 출전·득점 보완. 자원봉사 2차 자료이므로 단독 확정에 사용하지 않음",
+      "tier": "secondary"
+    },
+    {
+      "id": "statsbomb-open",
+      "title": "StatsBomb Open Data",
+      "publisher": "StatsBomb",
+      "url": "https://github.com/statsbomb/open-data",
+      "scope": "공개 이벤트 데이터의 구조와 현대·특정 대회 사례. 메시 중심·결승 중심 선택표본이므로 GOAT 핵심 점수에 직접 합산하지 않음",
+      "tier": "open-data"
+    },
+    {
+      "id": "ifab-laws",
+      "title": "Historical Laws of the Game",
+      "publisher": "The IFAB",
+      "url": "https://www.theifab.com/laws-of-the-game-documents/?language=en&year=all",
+      "scope": "교체·오프사이드 등 규칙 변화가 시대 비교에 주는 영향을 확인",
+      "tier": "official"
+    },
+    {
+      "id": "fifa-ranking",
+      "title": "FIFA/Coca-Cola World Ranking SUM method",
+      "publisher": "FIFA",
+      "url": "https://digitalhub.fifa.com/m/f99da4f73212220/original/edbm045h0udbwkqew35a-pdf.pdf",
+      "scope": "상대·경기 중요도 보정의 방법론적 참고. 2018년 도입 공식을 과거 선수에게 그대로 소급하지 않음",
+      "tier": "official"
+    },
+    {
+      "id": "rapm",
+      "title": "Plus-minus player ratings for soccer",
+      "publisher": "Kharrat, McHale & López Peña",
+      "url": "https://arxiv.org/abs/1706.04943",
+      "scope": "라인업 구간을 이용한 정규화 조정 플러스마이너스의 학술적 근거와 한계",
+      "tier": "research"
+    },
+    {
+      "id": "vaep",
+      "title": "Actions Speak Louder than Goals: Valuing Player Actions in Soccer",
+      "publisher": "Decroos et al.",
+      "url": "https://arxiv.org/abs/1802.07127",
+      "scope": "온볼 행동을 득점·실점 확률 변화로 평가하는 VAEP 방법론 참고",
+      "tier": "research"
+    },
+    {
+      "id": "playerank",
+      "title": "PlayeRank: data-driven performance evaluation and player ranking in soccer",
+      "publisher": "Pappalardo et al.",
+      "url": "https://arxiv.org/abs/1802.04987",
+      "scope": "포지션과 역할을 인지한 평가의 학술적 근거",
+      "tier": "research"
+    },
+    {
+      "id": "sportsref-policy",
+      "title": "Sports Reference data use policy",
+      "publisher": "Sports Reference",
+      "url": "https://www.sports-reference.com/data_use.html",
+      "scope": "무단 자동수집·재배포를 피하기 위한 데이터 거버넌스 근거. 본 파이프라인은 FBref를 스크래핑하지 않음",
+      "tier": "policy"
+    },
+    {
+      "id": "github-pages-docs",
+      "title": "Using custom workflows with GitHub Pages",
+      "publisher": "GitHub Docs",
+      "url": "https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages",
+      "scope": "정적 분석 결과의 GitHub Actions 기반 Pages 배포",
+      "tier": "official"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "method_version": "1.0.0",
+  "seed": 20260716,
+  "iterations": 40000,
+  "scope": {
+    "title": "남자 성인 11인제 축구 GOAT 분석",
+    "cutoff": "2026-06-10",
+    "ongoing_competitions": "2026 FIFA 월드컵은 진행 중 자료로 분리하고 확정 점수에서 제외",
+    "match_scope": "공식 1군 경기와 성인 A매치만 고려. 친선·전시·투어·리저브 경기는 정량 총계에서 분리",
+    "exclusions": "여자축구, 풋살, 비치사커, 감독 경력, 인기·상업성은 서로 다른 경쟁 생태계이므로 이 모델의 종합 순위에서 제외"
+  },
+  "dimensions": [
+    {
+      "key": "peak",
+      "label": "Peak 3",
+      "description": "동시대 대비 최고 3개 시즌의 개인 승리 기여와 최고 수준 경기에서의 압도력",
+      "default_weight": 30
+    },
+    {
+      "key": "prime",
+      "label": "Prime 5",
+      "description": "최고 연속 5개 시즌의 기량 유지와 전술적 중심성",
+      "default_weight": 20
+    },
+    {
+      "key": "career",
+      "label": "Career AUC",
+      "description": "엘리트 기준선을 넘은 시즌별 기여의 누적 면적과 지속성",
+      "default_weight": 25
+    },
+    {
+      "key": "club_context",
+      "label": "클럽 맥락",
+      "description": "리그·대륙대항전·전술 역할이 달라져도 유지된 개인 영향력",
+      "default_weight": 10
+    },
+    {
+      "key": "international",
+      "label": "대표팀 맥락",
+      "description": "경쟁 A매치와 메이저 대회에서 국가 전력 대비 만들어낸 개인 기여",
+      "default_weight": 10
+    },
+    {
+      "key": "honours",
+      "label": "업적 이력",
+      "description": "개인상과 팀 트로피를 자격시험이 아닌 보조 증거로만 반영",
+      "default_weight": 5
+    }
+  ],
+  "scenarios": {
+    "balanced": {
+      "label": "균형 기준",
+      "description": "피크와 누적가치를 함께 보며 업적 이력은 5%로 제한",
+      "weights": {"peak": 30, "prime": 20, "career": 25, "club_context": 10, "international": 10, "honours": 5}
+    },
+    "peak": {
+      "label": "피크 우선",
+      "description": "가장 높았던 순간과 5년 전성기에 75%를 배분",
+      "weights": {"peak": 50, "prime": 25, "career": 10, "club_context": 5, "international": 5, "honours": 5}
+    },
+    "longevity": {
+      "label": "지속성 우선",
+      "description": "엘리트 수준에서 오래 축적한 가치를 절반 반영",
+      "weights": {"peak": 15, "prime": 15, "career": 50, "club_context": 8, "international": 7, "honours": 5}
+    },
+    "international": {
+      "label": "대표팀 우선",
+      "description": "국적이라는 통제 불가능성을 감수하고 메이저 대표팀 무대를 크게 평가",
+      "weights": {"peak": 20, "prime": 15, "career": 15, "club_context": 5, "international": 40, "honours": 5}
+    },
+    "club": {
+      "label": "클럽 우선",
+      "description": "매주 반복되는 클럽 경기와 대륙대항전 맥락을 강조",
+      "weights": {"peak": 25, "prime": 20, "career": 25, "club_context": 25, "international": 0, "honours": 5}
+    },
+    "position_fair": {
+      "label": "포지션 공정",
+      "description": "공격수 중심 개인상·우승 이력을 빼고 역할 내 개인 기여 증거만 비교",
+      "weights": {"peak": 30, "prime": 22, "career": 28, "club_context": 10, "international": 10, "honours": 0}
+    }
+  },
+  "weight_sampling": {
+    "strategy": "각 공개 시나리오를 같은 확률로 선택한 뒤 그 주변의 제한된 Dirichlet 분포에서 표집",
+    "concentration": 70,
+    "minimum": {"peak": 0, "prime": 0, "career": 0, "club_context": 0, "international": 0, "honours": 0},
+    "maximum": {"peak": 50, "prime": 35, "career": 50, "club_context": 30, "international": 40, "honours": 10}
+  }
+}

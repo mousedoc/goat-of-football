@@ -4,7 +4,7 @@
  * honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49)
  * mobile: pass (34, 49, 50–57) · icons: pass (30) · slop: pass (42–45)
  */
-/* Hallmark · pre-emit critique: P5 H5 E4 S5 R4 V5 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 */
 @import url("./tokens.css");
 
 *,
@@ -737,6 +737,13 @@ main {
   margin-inline: auto;
   padding: var(--space-3xl) var(--page-gutter);
   scroll-margin-block-start: calc(var(--banner-height) + var(--space-md));
+}
+
+#ranking {
+  inline-size: min(
+    100%,
+    calc(var(--content-max) + var(--space-4xl) + var(--space-4xl) + var(--space-4xl))
+  );
 }
 
 .section-heading {
@@ -2689,7 +2696,7 @@ input[type="range"]::-moz-range-thumb {
   }
 }
 
-@media (min-width: 80rem) {
+@media (min-width: 80rem) and (min-aspect-ratio: 4 / 3) {
   .ranking-workbench {
     grid-template-columns: minmax(0, 1.45fr) minmax(24rem, 0.85fr);
     align-items: start;
@@ -2710,6 +2717,16 @@ input[type="range"]::-moz-range-thumb {
 
   .button-quiet {
     min-inline-size: 7rem;
+  }
+}
+
+@media (min-width: 110rem) and (min-aspect-ratio: 4 / 3) {
+  .ranking-workbench {
+    grid-template-columns: minmax(0, 1fr) minmax(22rem, 26rem);
+  }
+
+  .ranking-board > .table-scroll-hint {
+    display: none;
   }
 }
 
